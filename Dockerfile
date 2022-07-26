@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM frolvlad/alpine-glibc
 WORKDIR /app/
 
 # curl and ca-certificates are needed for volta installation
