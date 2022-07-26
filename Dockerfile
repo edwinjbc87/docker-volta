@@ -1,16 +1,19 @@
-FROM frolvlad/alpine-glibc
-WORKDIR /app/
+FROM debian:stable-slim
+WORKDIR /config/
 
 # curl and ca-certificates are needed for volta installation
 RUN apt-get update \
   && apt-get install -y \
   curl \
+  procps \
   ca-certificates \
-  --no-install-recommends
+  --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
 
 # bash will load volta() function via .bashrc 
 # using $VOLTA_HOME/load.sh
 SHELL ["/bin/bash", "-c"]
+
 
 # since we're starting non-interactive shell, 
 # we wil need to tell bash to load .bashrc manually
@@ -25,8 +28,9 @@ RUN curl https://get.volta.sh | bash
 RUN volta install node
 
 # test whether global installation of packages works
-RUN volta install ember-cli
+WORKDIR /app/
 
-# test that volta manages node/yarn version
-COPY index.js package.json yarn.lock /app/
-RUN yarn --pure-lockfile
+
+CMD [ "yarn", "install" ]
+
+EXPOSE 3000
